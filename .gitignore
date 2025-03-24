@@ -1,2 +1,10 @@
 /.conda
+/__pycache__
 .cache.sqlite
+daily_weather.csv
+weather.json
+Crop_recommendation.csv
+lucas_cover_attr.csv
+LUCAS-SOIL-2018.csv
+LUCAS_SOIL.csv
+rain.csv

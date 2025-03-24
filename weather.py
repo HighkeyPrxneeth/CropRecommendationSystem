@@ -39,4 +39,5 @@ class Weather:
         daily_data["temperature_2m_mean"] = daily_temperature_2m_mean
         daily_data["rain_sum"] = daily_rain_sum
         daily_dataframe = pd.DataFrame(data = daily_data)
+        daily_dataframe = daily_dataframe.dropna()
         return daily_dataframe
