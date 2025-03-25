@@ -12,7 +12,7 @@ class Soil:
 
 class SoilData:
     def __init__(self):
-        self.df = pd.read_csv("LUCAS_SOIL.csv")
+        self.df = pd.read_csv("LUCAS_SOIL.csv").drop_duplicates()
 
         self.df["N"] = pd.to_numeric(self.df["N"], errors="coerce")
         self.df["P"] = pd.to_numeric(self.df["P"], errors="coerce")

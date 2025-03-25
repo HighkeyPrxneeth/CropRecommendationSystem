@@ -1,5 +1,6 @@
 /.conda
 /__pycache__
+/tile_cache
 .cache.sqlite
 daily_weather.csv
 weather.json
