@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.neighbors import KNeighborsClassifier  
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from xgboost import XGBRegressor
@@ -8,25 +8,39 @@ from xgboost import XGBRegressor
 class CropModel:
     def __init__(self):
         self.data = pd.read_csv("Crop_recommendation.csv").drop('humidity', axis=1)
-        self.model = RandomForestClassifier(n_estimators=100, random_state=42)
+        self.model = KNeighborsClassifier()
+        self.feature_names = self.data.drop('label', axis=1).columns
+        self.fitted = False
 
     def fit(self):
+        if self.fitted:
+            return
         X = self.data.drop('label', axis=1)
         y = self.data['label']
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.3, random_state=42
+        )
         self.model.fit(X_train, y_train)
         self.X_test, self.y_test = X_test, y_test
+        self.fitted = True
 
     def score(self):
-        return f1_score(self.y_test, self.model.predict(self.X_test), average='weighted')
+        return f1_score(
+            self.y_test,
+            self.model.predict(self.X_test),
+            average='weighted'
+        )
 
     def predict(self, X):
-        return self.model.predict(X)
+        if not hasattr(X, "columns"):
+            X = pd.DataFrame(X, columns=self.feature_names)
+        pred_label = self.model.predict(X)[0]
+        return pred_label
 
 class WeatherModel:
     def __init__(self, df):
         self.df = df.copy()
-        self.temp_model = RandomForestRegressor(max_depth=100, random_state=42, n_estimators=100)
+        self.temp_model = XGBRegressor(random_state=42, n_estimators=200, learning_rate=0.1)
         self.rain_model = XGBRegressor(random_state=42, n_estimators=200, learning_rate=0.1)
         self.rain_lag_fill = None
         self.rain_roll3_fill = None
@@ -72,7 +86,6 @@ class WeatherModel:
         self.rain_model.fit(X_rain_train, y_rain_train)
         self.X_temp_test, self.y_temp_test = X_temp_test, y_temp_test
         self.X_rain_test, self.y_rain_test = X_rain_test, y_rain_test
-        print(self.score())
 
     def score(self):
         return {

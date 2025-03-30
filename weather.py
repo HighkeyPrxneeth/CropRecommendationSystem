@@ -2,7 +2,7 @@ import openmeteo_requests
 import requests_cache
 import pandas as pd
 from retry_requests import retry
-import time
+from datetime import datetime
 
 cache_session = requests_cache.CachedSession('.cache', expire_after = -1)
 retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
@@ -13,9 +13,11 @@ class Weather:
         self.lat = lat
         self.long = long
         self.url = "https://archive-api.open-meteo.com/v1/archive"
-        self.end_date = time.strftime("%Y-%m-%d")
-        self.start_date = pd.to_datetime(self.end_date) - pd.DateOffset(years = 30)
-        self.start_date = self.start_date.strftime("%Y-%m-%d")
+        now = datetime.today()                        
+        end_date_ts = pd.Timestamp(now) - pd.DateOffset(days=2)
+        start_date_ts = end_date_ts - pd.DateOffset(years=30)
+        self.end_date = end_date_ts.strftime("%Y-%m-%d")
+        self.start_date = start_date_ts.strftime("%Y-%m-%d")
         self.params = {
             "latitude": self.lat,
             "longitude": self.long,
