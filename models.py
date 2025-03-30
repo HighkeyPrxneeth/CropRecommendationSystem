@@ -7,7 +7,7 @@ from xgboost import XGBRegressor
 
 class CropModel:
     def __init__(self):
-        self.data = pd.read_csv("Crop_recommendation.csv").drop('humidity', axis=1)
+        self.data = pd.read_csv("resources\\Crop_recommendation.csv").drop('humidity', axis=1)
         self.model = KNeighborsClassifier()
         self.feature_names = self.data.drop('label', axis=1).columns
         self.fitted = False
