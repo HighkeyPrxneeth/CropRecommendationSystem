@@ -34,6 +34,7 @@ def index():
             weather_model = WeatherModel(weather_inst.data)
             weather_model.fit()
             temp_pred, rain_pred = weather_model.predict(day, month, year)
+            print(f"Weather model score: {weather_model.score()}")
 
             crop_model = CropModel()
             crop_model.fit()
@@ -50,6 +51,7 @@ def index():
                     input_features[col] = 0
             input_features = input_features[crop_model.feature_names]
             recommendation = crop_model.predict(input_features)
+            print(f"Crop model score: {crop_model.score()}")
             return jsonify({"message": f"Recommended crop: {recommendation.capitalize()}"})
         except Exception as e:
             return jsonify({"message": f"Error: {e}"}), 400
@@ -83,7 +85,7 @@ def index():
         return marker;
     }
     """
-    
+
     FastMarkerCluster(data=marker_data, callback=callback).add_to(map_obj)
     
     return render_template('index.html', map=map_obj)
